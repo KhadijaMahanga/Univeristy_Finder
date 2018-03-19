@@ -11,6 +11,8 @@ from django.core.serializers.json import DjangoJSONEncoder
 from .forms import InputForm
 from models import UniversityFinder
 
+grades_list= ["A","B","C","D","E","S","F"]
+
 # Create your views here.
 def index(request):
     if request.method == 'POST':
@@ -18,26 +20,46 @@ def index(request):
         form = InputForm(request.POST)
         # check whether it's valid:
         if form.is_valid():
-            # process the data in form.cleaned_data as required
-            # career = form.cleaned_data['career']
-            # region = form.cleaned_data['region']
-            # gender = form.cleaned_data['gender']
-            # edu_level = form.cleaned_data['education_level']
-            #
-            # schools = get_schools(career, region, gender, edu_level)
-            # if edu_level == '1':
-            #     school_level = "A levels"
-            # else:
-            #     school_level = "O levels"
-            # redirect to a new URL:
-            return render(request, 'index.html', {'form': form})
+            #process the data in form.cleaned_data as required
+            subjects = form.cleaned_data['subjects']
+            diplomas = form.cleaned_data['diplomas']
+            olevel_subjects = form.cleaned_data['olevel_subjects']
+            courses = []
+            if subjects:
+                alevel_subjects = subjects.split(",")
+                olevel_subjects = olevel_subjects.split(",")
+                courses = alevelroute(alevel_subjects, olevel_subjects)
+            elif diplomas:
+                olevel_subjects = olevel_subjects.split(",")
+                diplomas = diplomas.strip()
+
+
+
+            return render(request, 'index.html', {'form': form, 'courses': courses})
 
     # if a GET (or any other method) we'll create a blank form
     else:
-        3
-        #queryset1 = Acseeyear2017Subjectperformance.objects.filter(subjectname = "Chemistry").filter()
-        #queryset2 = Acseeyear2017Subjectperformance.objects.filter(subjectname = "Biology").filter
-        #stories = queryset1 | queryset2
-        #print stories.distinct().order_by('schoolcode')
         form = InputForm(label_suffix="  ")
         return render(request, 'index.html', {'form': form})
+
+def alevelroute(alevelsubjects, olevelsubjects):
+    courses_list=[]
+    for subject in alevelsubjects:
+        subject_array = subject.split("-")
+        subject = subject_array[0]
+        grade = subject_array[1]
+
+        position = grades_list.index(grade)
+        subjectslist = []
+
+        while position < len(grades_list):
+            subjectslist.append(subject +"-"+ grades_list[position])
+            position = position + 1
+        print subjectslist
+        #subject_dict = {'compulsory_subjects_ar__icontains'=subjectslist}
+        courses = UniversityFinder.objects.filter(compulsory_subjects_ar__icontains=subjectslist)#.filter(**subject_dict)
+        courses_list += list(courses)
+    print courses_list
+    return courses_list
+
+#def diplomaroute(diplomas, olevelsubjects):

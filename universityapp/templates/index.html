@@ -27,34 +27,28 @@
           <p class="jumbotron-heading"> {{ form.olevel_subjects.label }} {{ form.olevel_subjects }} </p>
           <span>{{ form.olevel_subjects.help_text }}</span>
           <br />
-          <input type="submit" value="Next" />
+          <input type="submit" value="Submit" />
         </form>
         <!-- <p class="lead"> Dar-es-salaam</p> -->
           <!-- <a href="/stations" class="btn btn-primary">Find Other Stations</a> -->
           <!-- <a href="#" class="btn btn-secondary">Secondary action</a> -->
       </div>
     </section>
-    {% if schools %}
+    {% if courses %}
       <section class=text-center>
         <div class="container">
-          <h4>List of schools doing well in {{ school_level }} subjects aligning to your career</h4>
+          <h4>List of courses and university with higher chances of admission</h4>
           <table>
             <tr>
-              <th>School Name</th>
-              <th>Region</th>
-              <th>Subject</th>
-              <th>Subject National Ranking</th>
-              <th>Subject Regional Ranking</th>
+              <th>University Name</th>
+              <th>Course Name</th>
               <th></th>
             </tr>
-            {% for school in schools %}
+            {% for course in courses %}
               <tr>
-                <td>{{ school.schoolname }}</td>
-                <td>{{ school.region }}</td>
-                <td>{{ school.subjectname }}</td>
-                <td>{{ school.subjectnatranking }}</td>
-                <td>{{ school.subjectregranking }}</td>
-                <td><a href="{% url 'school' schoolcode=school.schoolcode %}">More</a></td>
+                <td>{{ course.university_name }}</td>
+                <td>{{ course.course_name }}</td>
+                <td><a href="#">More</a></td>
               </tr>
             {% endfor %}
         </table>
